@@ -8,6 +8,8 @@ struct MemoryPage: View {
     @ObservedObject var model = AppModel.shared
     @State private var selected = Set<String>()
     @State private var showBackground = true
+    @State private var expanded = Set<String>()
+    @State private var byProcess = false
 
     private var snap: Snapshot { monitor.snapshot }
 
@@ -99,22 +101,95 @@ struct MemoryPage: View {
 
     private var list: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text(L("topMemory")).font(.headline)
+            HStack(spacing: 12) {
+                Text(byProcess ? L("topProcessesMemory") : L("topMemory")).font(.headline)
                 Spacer()
-                Toggle(L("background"), isOn: $showBackground).toggleStyle(.switch).controlSize(.small)
+                Picker("", selection: $byProcess) {
+                    Text(L("viewByApp")).tag(false)
+                    Text(L("viewByProcess")).tag(true)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .fixedSize()
+                if !byProcess {
+                    Toggle(L("background"), isOn: $showBackground).toggleStyle(.switch).controlSize(.small)
+                }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
 
             Divider().opacity(0.4)
 
-            ForEach(rows) { g in
-                row(g)
-                if g.id != rows.last?.id { Divider().opacity(0.25).padding(.leading, 52) }
+            if byProcess {
+                let list = Array(procs.sortedProcesses(by: .memory).prefix(50))
+                let maxMem = Double(list.first?.memory ?? 1)
+                ForEach(list) { p in
+                    processRow(p, maxMem: maxMem, indent: false)
+                    if p.id != list.last?.id { Divider().opacity(0.25).padding(.leading, 52) }
+                }
+            } else {
+                ForEach(rows) { g in
+                    row(g)
+                    if expanded.contains(g.id) {
+                        let children = procs.processes.filter { g.pids.contains($0.pid) }.sorted { $0.memory > $1.memory }
+                        let maxMem = Double(children.first?.memory ?? 1)
+                        ForEach(children) { p in processRow(p, maxMem: maxMem, indent: true) }
+                    }
+                    if g.id != rows.last?.id { Divider().opacity(0.25).padding(.leading, 52) }
+                }
             }
         }
         .glassCard(cornerRadius: 20)
+    }
+
+    /// One process (a child of an app when `indent`, or a row of the "By process" view).
+    private func processRow(_ p: ProcInfo, maxMem: Double, indent: Bool) -> some View {
+        HStack(spacing: 10) {
+            if indent {
+                Color.clear.frame(width: 44, height: 1)
+            } else {
+                AppIconView(image: procs.icon(forProcess: p), size: 22)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(p.name).font(indent ? .callout : .body.weight(.medium)).lineLimit(1).truncationMode(.middle)
+                    if p.isProtected {
+                        Image(systemName: "lock.fill").font(.caption2).foregroundStyle(.secondary).help(L("protected"))
+                    }
+                }
+                HStack(spacing: 8) {
+                    LevelBar(value: Double(p.memory) / max(maxMem, 1), color: Palette.memory.opacity(indent ? 0.7 : 1), height: 3)
+                        .frame(maxWidth: 200)
+                    Text("PID \(p.pid)").font(.caption2).foregroundStyle(.secondary).monospacedDigit()
+                    Text("CPU \(String(format: "%.0f", p.cpu))%").font(.caption2).foregroundStyle(.secondary).monospacedDigit()
+                }
+            }
+            Spacer()
+            Text(Fmt.bytes(p.memory))
+                .font(.system(indent ? .callout : .body, design: .rounded).weight(.semibold))
+                .monospacedDigit()
+            Button(L("quitApp")) { model.confirmQuit(p, force: false) }
+                .glassButton()
+                .controlSize(indent ? .small : .regular)
+                .disabled(p.isProtected)
+            Menu {
+                Button(L("quitApp")) { model.confirmQuit(p, force: false) }
+                Button(L("forceQuit")) { model.confirmQuit(p, force: true) }
+                if !p.path.isEmpty {
+                    Divider()
+                    Button(L("reveal")) { NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: p.path)]) }
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .disabled(p.isProtected)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, indent ? 4 : 8)
+        .background(indent ? Color.primary.opacity(0.03) : Color.clear)
     }
 
     private func row(_ g: AppGroup) -> some View {
@@ -143,7 +218,20 @@ struct MemoryPage: View {
                 HStack(spacing: 8) {
                     LevelBar(value: Double(g.memory) / max(maxMem, 1), color: Palette.memory, height: 4)
                         .frame(maxWidth: 220)
-                    Text(L10n.f("processesCount", g.pids.count)).font(.caption2).foregroundStyle(.secondary)
+                    Button {
+                        if expanded.contains(g.id) { expanded.remove(g.id) } else { expanded.insert(g.id) }
+                    } label: {
+                        HStack(spacing: 3) {
+                            Image(systemName: expanded.contains(g.id) ? "chevron.down" : "chevron.right")
+                                .font(.system(size: 8, weight: .bold))
+                            Text(L10n.processes(g.pids.count))
+                        }
+                        .font(.caption2)
+                        .foregroundStyle(Color.accentColor)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .help(expanded.contains(g.id) ? L("hideProcesses") : L("showProcesses"))
                     Text("CPU \(String(format: "%.0f", g.cpu))%").font(.caption2).foregroundStyle(.secondary).monospacedDigit()
                 }
             }

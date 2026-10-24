@@ -19,6 +19,11 @@ enum L10n {
         return isPortuguese ? pair.1 : pair.0
     }
 
+    /// "1 process" / "2 processes" (and the Portuguese equivalents).
+    static func processes(_ n: Int) -> String {
+        n == 1 ? t("processCount1") : f("processesCount", n)
+    }
+
     static func f(_ key: String, _ args: CVarArg...) -> String {
         String(format: t(key), arguments: args)
     }
@@ -104,6 +109,12 @@ enum L10n {
         "protected": ("Protected system process", "Processo de sistema protegido"),
         "groupByApp": ("Group by app", "Agrupar por app"),
         "processesCount": ("%d processes", "%d processos"),
+        "processCount1": ("1 process", "1 processo"),
+        "viewByApp": ("By app", "Por app"),
+        "viewByProcess": ("By process", "Por processo"),
+        "showProcesses": ("Show processes", "Mostrar processos"),
+        "hideProcesses": ("Hide processes", "Ocultar processos"),
+        "topProcessesMemory": ("Processes using the most memory", "Processos que mais consomem memória"),
         "name": ("Name", "Nome"),
         "pid": ("PID", "PID"),
         "readPerSec": ("Read/s", "Leitura/s"),
