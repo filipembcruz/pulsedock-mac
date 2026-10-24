@@ -39,6 +39,15 @@ enum L10n {
         "done": ("Done", "Concluído"),
         "search": ("Search", "Buscar"),
         "reveal": ("Show in Finder", "Mostrar no Finder"),
+        "menu.edit": ("Edit", "Editar"),
+        "menu.undo": ("Undo", "Desfazer"),
+        "menu.redo": ("Redo", "Refazer"),
+        "menu.cut": ("Cut", "Cortar"),
+        "menu.copy": ("Copy", "Copiar"),
+        "menu.paste": ("Paste", "Colar"),
+        "menu.selectAll": ("Select All", "Selecionar Tudo"),
+        "menu.window": ("Window", "Janela"),
+        "menu.minimize": ("Minimize", "Minimizar"),
 
         // Metrics
         "cpu": ("CPU", "CPU"),

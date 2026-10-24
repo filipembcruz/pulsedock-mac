@@ -48,7 +48,7 @@ struct ProcessesPage: View {
     }
 
     var body: some View {
-        let data = rows
+        let data = Array(rows.prefix(200))
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 SectionHeader(title: L("processes"))

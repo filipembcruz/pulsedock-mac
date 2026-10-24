@@ -37,7 +37,7 @@ final class WidgetController {
 
         var view = WidgetView()
         host = NSHostingController(rootView: view)
-        host.sizingOptions = [.preferredContentSize]
+        host.sizingOptions = []   // sized explicitly from the SwiftUI content (see onSize)
         host.view.wantsLayer = true
         host.view.layer?.backgroundColor = NSColor.clear.cgColor
         panel.contentViewController = host
@@ -45,6 +45,7 @@ final class WidgetController {
         // Callbacks need `self`, so install them after init.
         view.onDrag = { [weak self] p in self?.drag(to: p) }
         view.onDragEnd = { [weak self] in self?.endDrag() }
+        view.onSize = { [weak self] size in self?.resize(to: size) }
         host.rootView = view
 
         NotificationCenter.default.addObserver(forName: NSWindow.didResizeNotification, object: panel, queue: .main) { [weak self] _ in
@@ -95,6 +96,15 @@ final class WidgetController {
         if store.s.mode == .menuBarOnly { store.s.mode = .overlay }
         hiddenForFullscreen = false
         updateVisibility()
+    }
+
+    // MARK: Size
+
+    private func resize(to size: CGSize) {
+        let target = CGSize(width: ceil(size.width), height: ceil(size.height))
+        guard target.width > 0, target.height > 0, panel.frame.size != target else { return }
+        panel.setContentSize(target)
+        reposition()
     }
 
     // MARK: Position

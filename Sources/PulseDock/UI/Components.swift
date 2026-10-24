@@ -20,13 +20,11 @@ struct RingGauge: View {
                     style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.smooth(duration: 0.6), value: value)
             VStack(spacing: 0) {
                 if let label {
                     Text(label)
                         .font(.system(.title3, design: .rounded).weight(.semibold))
                         .monospacedDigit()
-                        .contentTransition(.numericText())
                 }
                 if let caption {
                     Text(caption)
@@ -95,7 +93,6 @@ struct LevelBar: View {
                 Capsule()
                     .fill(LinearGradient(colors: [color.opacity(0.75), color], startPoint: .leading, endPoint: .trailing))
                     .frame(width: max(height, geo.size.width * CGFloat(max(0, min(value, 1)))))
-                    .animation(.smooth(duration: 0.5), value: value)
             }
         }
         .frame(height: height)

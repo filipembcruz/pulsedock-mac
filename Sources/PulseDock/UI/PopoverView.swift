@@ -115,6 +115,7 @@ struct PopoverView: View {
         }
         .padding(14)
         .frame(width: 340)
+        .focusEffectDisabled()
         .id(model.languageTick)
     }
 

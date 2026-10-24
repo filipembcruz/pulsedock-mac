@@ -42,6 +42,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSPo
         model.togglePopover = { [weak self] in self?.togglePopover() }
         model.closePopover = { [weak self] in self?.popover.performClose(nil) }
         model.resetWidgetPosition = { [weak self] in self?.widget.resetPosition() }
+        procs.isNeeded = { [weak self] in
+            guard let self else { return false }
+            if self.mainWindow?.isVisible == true && self.mainWindow?.isMiniaturized == false { return true }
+            if self.popover.isShown { return true }
+            return self.widget.isShown && self.store.s.layout == .expanded && self.store.s.showMemory
+        }
 
         store.$s
             .receive(on: RunLoop.main)
@@ -70,7 +76,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSPo
         if s.interval != lastInterval {
             lastInterval = s.interval
             monitor.start(interval: s.interval)
-            procs.start(interval: max(2, s.interval * 2))
+            procs.start(interval: max(2.5, s.interval * 2.5))
         }
         if s.language != lastLanguage {
             lastLanguage = s.language
@@ -182,7 +188,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSPo
             window.titlebarAppearsTransparent = true
             window.toolbarStyle = .unified
             window.isReleasedWhenClosed = false
-            window.setContentSize(NSSize(width: 1040, height: 720))
+            window.setContentSize(NSSize(width: 1080, height: 800))
             window.minSize = NSSize(width: 860, height: 600)
             window.setFrameAutosaveName("PulseDockMainWindow")
             window.delegate = self
@@ -217,21 +223,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSPo
 
         let editItem = NSMenuItem()
         main.addItem(editItem)
-        let edit = NSMenu(title: "Edit")
-        edit.addItem(withTitle: "Undo", action: Selector(("undo:")), keyEquivalent: "z")
-        edit.addItem(withTitle: "Redo", action: Selector(("redo:")), keyEquivalent: "Z")
+        let edit = NSMenu(title: L("menu.edit"))
+        edit.addItem(withTitle: L("menu.undo"), action: Selector(("undo:")), keyEquivalent: "z")
+        edit.addItem(withTitle: L("menu.redo"), action: Selector(("redo:")), keyEquivalent: "Z")
         edit.addItem(.separator())
-        edit.addItem(withTitle: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
-        edit.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
-        edit.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
-        edit.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        edit.addItem(withTitle: L("menu.cut"), action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        edit.addItem(withTitle: L("menu.copy"), action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        edit.addItem(withTitle: L("menu.paste"), action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        edit.addItem(withTitle: L("menu.selectAll"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
         editItem.submenu = edit
 
         let windowItem = NSMenuItem()
         main.addItem(windowItem)
-        let win = NSMenu(title: "Window")
-        win.addItem(withTitle: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
-        win.addItem(withTitle: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+        let win = NSMenu(title: L("menu.window"))
+        win.addItem(withTitle: L("close"), action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+        win.addItem(withTitle: L("menu.minimize"), action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
         windowItem.submenu = win
         NSApp.windowsMenu = win
 

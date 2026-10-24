@@ -9,12 +9,18 @@ struct WidgetView: View {
 
     var onDrag: (CGPoint) -> Void = { _ in }
     var onDragEnd: () -> Void = {}
+    var onSize: (CGSize) -> Void = { _ in }
 
     private var s: AppSettings { store.s }
     private var snap: Snapshot { monitor.snapshot }
 
     var body: some View {
         content
+            .fixedSize()
+            .background(GeometryReader { g in
+                Color.clear.preference(key: WidgetSizeKey.self, value: g.size)
+            })
+            .onPreferenceChange(WidgetSizeKey.self) { size in onSize(size) }
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 3, coordinateSpace: .global)
@@ -355,4 +361,9 @@ struct WidgetMenu: View {
             model.languageTick += 1
         })
     }
+}
+
+private struct WidgetSizeKey: PreferenceKey {
+    static let defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) { value = nextValue() }
 }

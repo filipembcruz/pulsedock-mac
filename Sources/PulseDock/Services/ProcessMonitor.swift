@@ -157,6 +157,9 @@ final class ProcessMonitor: ObservableObject {
     private var timer: Timer?
     private var busy = false
     private var iconCache: [String: NSImage] = [:]
+    /// Sampling every process is the most expensive thing PulseDock does, so it only runs
+    /// while something on screen shows process data (main window, popover, full widget).
+    var isNeeded: () -> Bool = { true }
 
     private init() {}
 
@@ -164,9 +167,12 @@ final class ProcessMonitor: ObservableObject {
         timer?.invalidate()
         refresh()
         let t = Timer(timeInterval: max(interval, 1.5), repeats: true) { [weak self] _ in
-            MainActor.assumeIsolated { self?.refresh() }
+            MainActor.assumeIsolated {
+                guard let self, self.isNeeded() else { return }
+                self.refresh()
+            }
         }
-        t.tolerance = 0.3
+        t.tolerance = 0.5
         RunLoop.main.add(t, forMode: .common)
         timer = t
     }
