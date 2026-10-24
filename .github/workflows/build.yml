@@ -18,17 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # One-time: the first upload arrives as a single archive (bootstrap/). Unpack it into the repo.
-      - name: Unpack bootstrap archive
-        if: hashFiles('bootstrap/source.tar.gz.b64') != ''
+      # Source arrives as one archive uploaded through the GitHub web UI. Unpack it into the repo and commit.
+      - name: Unpack uploaded source archive
+        if: hashFiles('pulsedock-source.tgz') != ''
         run: |
-          python3 -c "import base64;open('/tmp/src.tgz','wb').write(base64.b64decode(open('bootstrap/source.tar.gz.b64').read()))"
-          tar -xzf /tmp/src.tgz -C .
-          git rm -rq bootstrap
+          tar -xzf pulsedock-source.tgz -C .
+          git rm -q pulsedock-source.tgz
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Unpack source archive"
+          git commit -m "Unpack source archive" || echo "nothing to commit"
           git push
 
       - name: Toolchain
