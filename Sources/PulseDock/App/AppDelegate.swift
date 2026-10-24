@@ -61,6 +61,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSPo
 
         settingsChanged(store.s)
 
+        // Start with the Mac by default (only from /Applications, where macOS allows login items).
+        if !store.s.loginItemConfigured, Bundle.main.bundlePath.hasPrefix("/Applications/") {
+            LoginItem.set(true)
+            store.s.loginItemConfigured = true
+        }
+
         if !store.s.didOnboard {
             store.s.didOnboard = true
             showMainWindow(.overview)

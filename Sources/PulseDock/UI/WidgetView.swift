@@ -334,6 +334,7 @@ struct WidgetMenu: View {
             ForEach(Corner.allCases) { Text(L("corner.\($0.rawValue)")).tag($0) }
         }
         Toggle(L("set.lock"), isOn: binding(\.lockPosition))
+        Toggle(L("set.launchAtLogin"), isOn: Binding(get: { LoginItem.isEnabled }, set: { LoginItem.set($0) }))
         Picker(L("set.language"), selection: languageBinding) {
             Text("English").tag("en")
             Text("Português").tag("pt")

@@ -52,6 +52,8 @@ struct AppSettings: Codable, Equatable {
     var language: String = "en"
     var groupByApp = true
     var didOnboard = false
+    /// Open-at-login is switched on once, on first launch; after that the user's choice wins.
+    var loginItemConfigured = false
 
     init() {}
 
@@ -82,6 +84,7 @@ struct AppSettings: Codable, Equatable {
         language = (try? c.decodeIfPresent(String.self, forKey: .language)) ?? d.language
         groupByApp = (try? c.decodeIfPresent(Bool.self, forKey: .groupByApp)) ?? d.groupByApp
         didOnboard = (try? c.decodeIfPresent(Bool.self, forKey: .didOnboard)) ?? d.didOnboard
+        loginItemConfigured = (try? c.decodeIfPresent(Bool.self, forKey: .loginItemConfigured)) ?? d.loginItemConfigured
         sanitize()
     }
 

@@ -22,7 +22,7 @@ Liquid Glass do macOS 26 / 27 (no macOS 14–15 usa materiais translúcidos).
 2. Abra e arraste o **PulseDock** para **Aplicativos**.
 3. **Primeira abertura:** o app tem assinatura ad-hoc (não é notarizado — isso exige conta paga de desenvolvedor Apple), então o macOS bloqueia o duplo clique na primeira vez.
    Clique com o botão direito no PulseDock → **Abrir** → **Abrir**. No macOS 15+, se não houver botão Abrir: *Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim*.
-   Ou, no Terminal: `xattr -dr com.apple.quarantine /Applications/PulseDock.app`
+   Prefere o Terminal? Rode `xattr -dr com.apple.quarantine /Applications/PulseDock.app`. Se aparecer *Operation not permitted*, o Terminal precisa de *Ajustes do Sistema → Privacidade e Segurança → Gerenciamento de Apps*; o botão **Abrir Mesmo Assim** é mais simples.
 4. Procure o **ícone de pulso** na barra de menus. O widget aparece no canto superior direito.
 
 **Compilar você mesmo** (precisa do Xcode 26 ou das Command Line Tools): `./scripts/install.sh` compila, instala em /Applications e abre.
@@ -35,7 +35,8 @@ Liquid Glass do macOS 26 / 27 (no macOS 14–15 usa materiais translúcidos).
 - **Três layouts:** compacto (padrão), completo e faixa horizontal — troque no ⤢ ou no menu ⋯.
 - **Três modos:** flutuante (sempre na frente), na mesa (atrás das janelas) ou só na barra de menus.
 - **Coloque onde quiser:** fixe em qualquer um dos 4 cantos, arraste para qualquer lugar (encaixa no canto ao soltar perto), trave a posição, escolha o monitor e a distância da borda.
-- **Extras:** ignorar cliques (segure **⌥ Option** para interagir), ocultar quando um app estiver em tela cheia, abrir ao iniciar sessão, opacidade e intervalo de atualização, mostrar/ocultar cada métrica.
+- **Inicia com o Mac:** *Abrir ao iniciar sessão* vem ligado por padrão (troque no menu **⋯** ou em *Ajustes → Geral*).
+- **Extras:** ignorar cliques (segure **⌥ Option** para interagir), ocultar quando um app estiver em tela cheia, opacidade e intervalo de atualização, mostrar/ocultar cada métrica.
 - **Idiomas:** inglês (padrão) e português. Troque quando quiser no menu **⋯** do widget → *Language/Idioma*, ou em *Ajustes → Geral*. *Automático* segue o idioma do macOS.
 
 **Novidades no Mac**

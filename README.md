@@ -22,7 +22,7 @@ with the Liquid Glass look of macOS 26 / 27 (falls back to translucent materials
 2. Open it and drag **PulseDock** to **Applications**.
 3. **First launch:** the app is ad-hoc signed (not notarized — that needs a paid Apple Developer account), so macOS blocks a double-click the first time.
    Right-click PulseDock → **Open** → **Open**. On macOS 15+, if there's no Open button: *System Settings → Privacy & Security → Open Anyway*.
-   Or, in Terminal: `xattr -dr com.apple.quarantine /Applications/PulseDock.app`
+   Prefer Terminal? Run `xattr -dr com.apple.quarantine /Applications/PulseDock.app`. If it says *Operation not permitted*, Terminal needs *System Settings → Privacy & Security → App Management*; the **Open Anyway** button above is simpler.
 4. Look for the **pulse icon** in the menu bar. The widget appears in the top-right corner.
 
 **Build it yourself** (needs Xcode 26 or its Command Line Tools): `./scripts/install.sh` builds, installs to /Applications and opens it.
@@ -35,7 +35,8 @@ with the Liquid Glass look of macOS 26 / 27 (falls back to translucent materials
 - **Three layouts:** compact (default), full and horizontal strip — switch with ⤢ or the ⋯ menu.
 - **Three modes:** floating (always on top), on the desktop (behind your windows), or menu bar only.
 - **Put it anywhere:** pin to any of the 4 corners, drag it anywhere (it snaps to corners when dropped nearby), lock position, choose the display and the distance from the edge.
-- **Extras:** click-through (hold **⌥ Option** to interact), hide while an app is full screen, open at login, opacity and refresh rate, show/hide each metric.
+- **Starts with your Mac:** *Open at login* is on by default (toggle it in the **⋯** menu or *Settings → General*).
+- **Extras:** click-through (hold **⌥ Option** to interact), hide while an app is full screen, opacity and refresh rate, show/hide each metric.
 - **Languages:** English (default) and Português. Switch any time from the widget's **⋯** menu → *Language*, or in *Settings → General*. *Automatic* follows the macOS language.
 
 **New on the Mac**

@@ -47,6 +47,9 @@ final class WidgetController {
         view.onDragEnd = { [weak self] in self?.endDrag() }
         view.onSize = { [weak self] size in self?.resize(to: size) }
         host.rootView = view
+        // Never start at 0×0: SwiftUI doesn't lay out (or report its size from) an empty view.
+        panel.setContentSize(NSSize(width: 214, height: 240))
+        fitToContent()
 
         NotificationCenter.default.addObserver(forName: NSWindow.didResizeNotification, object: panel, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.reposition() }
@@ -74,6 +77,7 @@ final class WidgetController {
             break
         }
         panel.alphaValue = s.opacity
+        DispatchQueue.main.async { [weak self] in MainActor.assumeIsolated { self?.fitToContent() } }
         updateClickThrough(s)
         updateFullscreenWatcher(s)
         reposition()
@@ -99,6 +103,13 @@ final class WidgetController {
     }
 
     // MARK: Size
+
+    /// Sizes the panel to the SwiftUI content's ideal size (the root view is `.fixedSize()`).
+    private func fitToContent() {
+        host.view.layoutSubtreeIfNeeded()
+        let fit = host.view.fittingSize
+        if fit.width > 1, fit.height > 1 { resize(to: fit) }
+    }
 
     private func resize(to size: CGSize) {
         let target = CGSize(width: ceil(size.width), height: ceil(size.height))
