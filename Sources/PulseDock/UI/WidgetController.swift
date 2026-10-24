@@ -11,7 +11,8 @@ final class WidgetPanel: NSPanel {
 @MainActor
 final class WidgetController {
     private let panel: WidgetPanel
-    private let host: NSHostingController<WidgetView>
+    private let host: NSHostingView<WidgetView>
+    private var sizeTimer: Timer?
     private let store = SettingsStore.shared
     private var cancellables = Set<AnyCancellable>()
     private var dragOffset: CGPoint?
@@ -36,11 +37,11 @@ final class WidgetController {
         panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
 
         var view = WidgetView()
-        host = NSHostingController(rootView: view)
-        host.sizingOptions = []   // sized explicitly from the SwiftUI content (see onSize)
-        host.view.wantsLayer = true
-        host.view.layer?.backgroundColor = NSColor.clear.cgColor
-        panel.contentViewController = host
+        host = NSHostingView(rootView: view)
+        host.sizingOptions = [.intrinsicContentSize]
+        host.wantsLayer = true
+        host.layer?.backgroundColor = NSColor.clear.cgColor
+        panel.contentView = host
 
         // Callbacks need `self`, so install them after init.
         view.onDrag = { [weak self] p in self?.drag(to: p) }
@@ -50,6 +51,15 @@ final class WidgetController {
         // Never start at 0×0: SwiftUI doesn't lay out (or report its size from) an empty view.
         panel.setContentSize(NSSize(width: 214, height: 240))
         fitToContent()
+
+        // Safety net: content size changes with data (e.g. a GPU or battery row appearing).
+        // Comparing two sizes twice a second costs nothing and guarantees the panel never clips.
+        let t = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.fitToContent() }
+        }
+        t.tolerance = 0.2
+        RunLoop.main.add(t, forMode: .common)
+        sizeTimer = t
 
         NotificationCenter.default.addObserver(forName: NSWindow.didResizeNotification, object: panel, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.reposition() }
@@ -106,14 +116,14 @@ final class WidgetController {
 
     /// Sizes the panel to the SwiftUI content's ideal size (the root view is `.fixedSize()`).
     private func fitToContent() {
-        host.view.layoutSubtreeIfNeeded()
-        let fit = host.view.fittingSize
+        let fit = host.fittingSize
         if fit.width > 1, fit.height > 1 { resize(to: fit) }
     }
 
     private func resize(to size: CGSize) {
         let target = CGSize(width: ceil(size.width), height: ceil(size.height))
-        guard target.width > 0, target.height > 0, panel.frame.size != target else { return }
+        guard target.width > 1, target.height > 1,
+              abs(panel.frame.width - target.width) > 0.5 || abs(panel.frame.height - target.height) > 0.5 else { return }
         panel.setContentSize(target)
         reposition()
     }
