@@ -200,9 +200,9 @@ final class SystemSampler {
         }
         if kr == KERN_SUCCESS {
             let page = UInt64(vm_kernel_page_size)
-            let internal = UInt64(stats.internal_page_count)
+            let internalPages = UInt64(stats.internal_page_count)
             let purgeable = UInt64(stats.purgeable_count)
-            let app = (internal > purgeable ? internal - purgeable : 0) * page
+            let app = (internalPages > purgeable ? internalPages - purgeable : 0) * page
             let wired = UInt64(stats.wire_count) * page
             let compressed = UInt64(stats.compressor_page_count) * page
             let cached = (UInt64(stats.external_page_count) + purgeable) * page
