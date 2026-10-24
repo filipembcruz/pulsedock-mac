@@ -13,6 +13,8 @@
   &nbsp;·&nbsp; macOS 14 Sonoma ou mais novo · Apple silicon e Intel (universal) · grátis e open source (MIT)
 </p>
 
+![PulseDock na mesa: janela de visão geral e o widget flutuante](docs/screenshots/hero.jpg)
+
 Versão para Mac do [PulseDock para Windows](https://github.com/filipembcruz/pulsedock). Feito em Swift + SwiftUI, com o visual
 Liquid Glass do macOS 26 / 27 (no macOS 14–15 usa materiais translúcidos).
 
@@ -20,12 +22,34 @@ Liquid Glass do macOS 26 / 27 (no macOS 14–15 usa materiais translúcidos).
 
 1. Baixe o [`PulseDock.dmg`](https://github.com/filipembcruz/pulsedock-mac/releases/latest/download/PulseDock.dmg) do Release mais recente.
 2. Abra e arraste o **PulseDock** para **Aplicativos**.
-3. **Primeira abertura:** o app tem assinatura ad-hoc (não é notarizado — isso exige conta paga de desenvolvedor Apple), então o macOS bloqueia o duplo clique na primeira vez.
-   Clique com o botão direito no PulseDock → **Abrir** → **Abrir**. No macOS 15+, se não houver botão Abrir: *Ajustes do Sistema → Privacidade e Segurança → Abrir Mesmo Assim*.
+3. **Primeira abertura:** o app tem assinatura ad-hoc (não é notarizado — isso exige conta paga de desenvolvedor Apple), então o macOS bloqueia na primeira vez e só oferece *Mover para o Lixo* / *OK*.
+   Clique em **OK**, abra *Ajustes do Sistema → Privacidade e Segurança* (barra lateral), role até o fim e clique em **Abrir Mesmo Assim** ao lado de "PulseDock"; confirme com Touch ID ou senha. (No macOS 14 também dá para clicar com o botão direito → **Abrir** → **Abrir**.) Cada versão nova baixada pede isso uma vez.
    Prefere o Terminal? Rode `xattr -dr com.apple.quarantine /Applications/PulseDock.app`. Se aparecer *Operation not permitted*, o Terminal precisa de *Ajustes do Sistema → Privacidade e Segurança → Gerenciamento de Apps*; o botão **Abrir Mesmo Assim** é mais simples.
 4. Procure o **ícone de pulso** na barra de menus. O widget aparece no canto superior direito.
 
 **Compilar você mesmo** (precisa do Xcode 26 ou das Command Line Tools): `./scripts/install.sh` compila, instala em /Applications e abre.
+
+## Screenshots
+
+| Widget · compacto (padrão) | Widget · completo | Barra de menus |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/widget-compact.jpg" width="230" alt="Widget compacto"> | <img src="docs/screenshots/widget-full.jpg" width="230" alt="Widget completo"> | <img src="docs/screenshots/menubar.jpg" width="260" alt="Popover da barra de menus"> |
+
+**Widget · faixa**
+
+<img src="docs/screenshots/widget-strip.jpg" width="620" alt="Widget em faixa">
+
+| Visão geral | Liberar memória |
+|:---:|:---:|
+| ![Visão geral](docs/screenshots/overview.jpg) | ![Liberar memória, por app](docs/screenshots/memory.jpg) |
+| **Expanda um app para ver os processos dele** | **…ou liste todos os processos por memória** |
+| ![Chrome expandido em processos](docs/screenshots/memory-expanded.jpg) | ![Processos que mais consomem memória](docs/screenshots/memory-processes.jpg) |
+| **Processos** | **Limpeza de disco** |
+| ![Tabela de processos](docs/screenshots/processes.jpg) | ![Limpeza de disco](docs/screenshots/cleanup.jpg) |
+
+<p align="center"><img src="docs/screenshots/settings.jpg" width="640" alt="Ajustes"></p>
+
+*As capturas estão em inglês, o idioma padrão; o app inteiro também está em português (menu ⋯ → Language).*
 
 ## Recursos
 
@@ -41,6 +65,8 @@ Liquid Glass do macOS 26 / 27 (no macOS 14–15 usa materiais translúcidos).
 
 **Novidades no Mac**
 - **Liberar memória:** página dedicada à RAM — composição (apps, fixa, comprimida, cache), pressão e os apps que mais consomem memória *agrupados por app* (Chrome + todos os helpers = uma linha). Marque vários e **Encerrar N selecionados** num clique, ou force o encerramento de um app travado.
+  - Clique em **“N processos”** embaixo de um app para expandir e ver qual processo dele (uma aba pesada do navegador, um renderer…) usa mais memória — e encerrar só aquele.
+  - Troque para **Por processo** para listar os 50 processos individuais que mais usam RAM.
 - **Processos:** tabela no estilo Monitor de Atividade — ordene por memória, CPU ou disco, busque, agrupe por app, botão direito para encerrar / forçar / mostrar no Finder.
 - **Limpeza de disco:** um botão **Analisar** e um **Limpar** para:
   - Caches de apps · Logs e relatórios de falha · arquivos temporários antigos · anexos baixados do Mail

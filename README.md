@@ -13,6 +13,8 @@
   &nbsp;·&nbsp; macOS 14 Sonoma or later · Apple silicon &amp; Intel (universal) · free &amp; open source (MIT)
 </p>
 
+![PulseDock on the desktop: overview window and the floating widget](docs/screenshots/hero.jpg)
+
 The macOS sibling of [PulseDock for Windows](https://github.com/filipembcruz/pulsedock). Written in Swift + SwiftUI,
 with the Liquid Glass look of macOS 26 / 27 (falls back to translucent materials on macOS 14–15).
 
@@ -20,12 +22,32 @@ with the Liquid Glass look of macOS 26 / 27 (falls back to translucent materials
 
 1. Download [`PulseDock.dmg`](https://github.com/filipembcruz/pulsedock-mac/releases/latest/download/PulseDock.dmg) from the latest Release.
 2. Open it and drag **PulseDock** to **Applications**.
-3. **First launch:** the app is ad-hoc signed (not notarized — that needs a paid Apple Developer account), so macOS blocks a double-click the first time.
-   Right-click PulseDock → **Open** → **Open**. On macOS 15+, if there's no Open button: *System Settings → Privacy & Security → Open Anyway*.
+3. **First launch:** the app is ad-hoc signed (not notarized — that needs a paid Apple Developer account), so macOS blocks it the first time and offers only *Move to Trash* / *Done*.
+   Click **Done**, open *System Settings → Privacy & Security*, scroll to the bottom and click **Open Anyway** next to "PulseDock", then confirm with Touch ID or your password. (On macOS 14 you can also right-click PulseDock → **Open** → **Open**.) Every newly downloaded version asks once.
    Prefer Terminal? Run `xattr -dr com.apple.quarantine /Applications/PulseDock.app`. If it says *Operation not permitted*, Terminal needs *System Settings → Privacy & Security → App Management*; the **Open Anyway** button above is simpler.
 4. Look for the **pulse icon** in the menu bar. The widget appears in the top-right corner.
 
 **Build it yourself** (needs Xcode 26 or its Command Line Tools): `./scripts/install.sh` builds, installs to /Applications and opens it.
+
+## Screenshots
+
+| Widget · compact (default) | Widget · full | Menu bar |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/widget-compact.jpg" width="230" alt="Compact widget"> | <img src="docs/screenshots/widget-full.jpg" width="230" alt="Full widget"> | <img src="docs/screenshots/menubar.jpg" width="260" alt="Menu bar popover"> |
+
+**Widget · strip**
+
+<img src="docs/screenshots/widget-strip.jpg" width="620" alt="Strip widget">
+
+| Overview | Free up memory |
+|:---:|:---:|
+| ![Overview](docs/screenshots/overview.jpg) | ![Free up memory, grouped by app](docs/screenshots/memory.jpg) |
+| **Expand an app to see its processes** | **…or list every process by memory** |
+| ![Chrome expanded into its processes](docs/screenshots/memory-expanded.jpg) | ![Processes using the most memory](docs/screenshots/memory-processes.jpg) |
+| **Processes** | **Disk Cleanup** |
+| ![Processes table](docs/screenshots/processes.jpg) | ![Disk Cleanup](docs/screenshots/cleanup.jpg) |
+
+<p align="center"><img src="docs/screenshots/settings.jpg" width="640" alt="Settings"></p>
 
 ## Features
 
@@ -41,6 +63,8 @@ with the Liquid Glass look of macOS 26 / 27 (falls back to translucent materials
 
 **New on the Mac**
 - **Free up memory:** a page dedicated to RAM — breakdown (app, wired, compressed, cached), pressure, and the apps using the most memory *grouped by app* (Chrome + all its helpers = one row). Tick several and **Quit N selected** in one click, or Force Quit a hung app.
+  - Click **“N processes”** under an app to expand it and see which of its processes (a heavy browser tab, a renderer…) uses the most memory — and quit just that one.
+  - Switch to **By process** to list the 50 individual processes using the most RAM.
 - **Processes:** an Activity-Monitor-style table — sort by memory, CPU or disk, search, group by app, right-click to quit / force quit / show in Finder.
 - **Disk Cleanup:** one **Scan** and one **Clean** button for:
   - App caches · Logs & crash reports · old temporary files · Mail attachment downloads
