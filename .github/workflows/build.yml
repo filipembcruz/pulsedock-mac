@@ -60,8 +60,8 @@ jobs:
             **Download `PulseDock.dmg`**, open it and drag PulseDock to Applications.
             macOS 14 Sonoma or later · Apple silicon and Intel (universal) · Liquid Glass on macOS 26+.
 
-            First launch: the app is not notarized, so right-click PulseDock → **Open** → **Open**
-            (or run `xattr -dr com.apple.quarantine /Applications/PulseDock.app`).
+            First launch: the app is not notarized, so macOS blocks it once. Click **Done**, then
+            System Settings → Privacy & Security → **Open Anyway** next to "PulseDock".
           files: |
             dist/PulseDock.dmg
             dist/PulseDock.zip
